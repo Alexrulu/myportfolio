@@ -40,6 +40,7 @@ export default function Projects() {
       ? "Multi-tenant recruiting platform built on a microservices architecture. Joined as a trainee and progressively took on greater responsibilities: developed use cases with tests, created entities, worked with migrations, and closed 6 sprints resolving the team's pending tasks."
       : "Plataforma multi-tenant de recruiting desarrollada en microservicios. Ingresé como trainee y fui asumiendo responsabilidades progresivamente: desarrollé casos de uso con tests, creé entidades, trabajé con migraciones y cerré 6 sprints resolviendo tareas pendientes del equipo.",
     stack: ["TypeScript", "React", "Node.js", "Express", "SQLite", "TypeORM"],
+    link: "#",
   },
   {
     img: "/keytodream.png",
