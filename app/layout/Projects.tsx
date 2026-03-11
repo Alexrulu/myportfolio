@@ -19,7 +19,7 @@ export default function Projects() {
       ? "Web application for the academic and administrative management of a language institute, with a centralized dashboard for Admin, Staff and Student roles. I joined at an advanced stage, contributing to enrollment logic, level assessment and role management within an established MVC architecture."
       : "Aplicación web para la gestión académica y administrativa de una institución de idiomas, con panel centralizado para roles Admin, Staff y Student. Me incorporé en una etapa avanzada, contribuyendo en lógica de inscripción, niveles mediante exámenes y gestión de roles dentro de una arquitectura MVC establecida.",
     stack: ["PHP", "Laravel", "MySQL", "JavaScript", "Node.js"],
-    link: "https://ulpan.com",
+    link: "https://ulpanim.org/",
   },
   {
     img: "/laliga.png",
@@ -40,7 +40,6 @@ export default function Projects() {
       ? "Multi-tenant recruiting platform built on a microservices architecture. Joined as a trainee and progressively took on greater responsibilities: developed use cases with tests, created entities, worked with migrations, and closed 6 sprints resolving the team's pending tasks."
       : "Plataforma multi-tenant de recruiting desarrollada en microservicios. Ingresé como trainee y fui asumiendo responsabilidades progresivamente: desarrollé casos de uso con tests, creé entidades, trabajé con migraciones y cerré 6 sprints resolviendo tareas pendientes del equipo.",
     stack: ["TypeScript", "React", "Node.js", "Express", "SQLite", "TypeORM"],
-    link: "https://amia.org.ar",
   },
   {
     img: "/keytodream.png",
@@ -50,7 +49,7 @@ export default function Projects() {
       ? "Academic project developed during the Full Stack program at Digital House. An interactive real estate platform featuring 3D animations and a secure login system. Selected as one of the top projects of the course."
       : "Proyecto académico desarrollado durante el programa Full Stack en Digital House. Plataforma inmobiliaria interactiva con animaciones 3D y sistema de login seguro. Seleccionado como uno de los mejores proyectos del curso.",
     stack: ["React", "Express", "MySQL", "Tailwind"],
-    link: "#",
+    link: "https://keytodream.vercel.app/",
   },
 ]
 
