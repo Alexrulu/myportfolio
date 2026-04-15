@@ -111,7 +111,7 @@ export default function Contact() {
 
             <div className="flex items-center gap-2 px-4 py-4 md:px-6 flex-shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500/70 animate-pulse flex-shrink-0" />
-              <p className="text-xs text-foreground-secondary">{t.available}</p>
+              <p className="text-xs md:text-sm text-foreground-secondary">{t.available}</p>
             </div>
 
             <input
@@ -175,7 +175,7 @@ export default function Contact() {
                   className="flex flex-col gap-3"
                 >
                   <span className="text-foreground-icons text-xs font-mono tracking-widest">//</span>
-                  <p className="text-xs lg:text-sm text-foreground-secondary leading-relaxed">"{active.quote}"</p>
+                  <p className="text-sm text-foreground-secondary leading-relaxed">"{active.quote}"</p>
                   <div className="flex flex-col gap-0.5">
                     <span className="text-xs font-semibold text-foreground-principal">{active.name}</span>
                     <span className="text-[10px] font-mono text-foreground-icons uppercase tracking-widest">{active.role}</span>
@@ -249,9 +249,9 @@ export default function Contact() {
           </div>
           <div className="flex flex-col divide-y divide-border">
             {t.infoLabels.map(({ label, value }) => (
-              <div key={label} className="flex items-center justify-between px-4 py-3.5">
-                <span className="text-[10px] font-mono text-foreground-icons uppercase tracking-widest">{label}</span>
-                <span className="text-xs text-foreground-secondary font-mono">{value}</span>
+              <div key={label} className="flex items-center justify-between gap-3 px-4 py-3.5">
+                <span className="text-[10px] font-mono text-foreground-icons uppercase tracking-widest flex-shrink-0">{label}</span>
+                <span className="text-xs text-foreground-secondary font-mono truncate text-right">{value}</span>
               </div>
             ))}
           </div>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background -->
+  <rect width="32" height="32" rx="4" fill="#0e0e0e"/>
+  <!-- Border sutil — igual al portfolio -->
+  <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="3.25" fill="none" stroke="rgba(60,60,60,0.7)" stroke-width="0.75"/>
+  <!-- Letra A -->
+  <text
+    x="16"
+    y="23"
+    font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
+    font-size="20"
+    font-weight="600"
+    fill="#e8e8e8"
+    text-anchor="middle"
+  >A</text>
+</svg>

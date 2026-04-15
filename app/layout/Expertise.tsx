@@ -134,7 +134,7 @@ whyP2: language === "EN"
                 </div>
                 <div className="flex flex-col gap-1.5">
                   {item.stack.map((tech) => (
-                    <span key={tech} className="text-xs text-foreground-secondary font-mono flex items-center gap-2">
+                    <span key={tech} className="text-xs md:text-sm text-foreground-secondary font-mono flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full bg-foreground-icons flex-shrink-0" />
                       {tech}
                     </span>
@@ -188,9 +188,9 @@ whyP2: language === "EN"
                       <span className="text-[10px] font-mono border border-border text-foreground-icons px-1.5 py-0">{t.current}</span>
                     )}
                   </div>
-                  <p className="text-xs text-foreground-secondary">{item.institution}</p>
+                  <p className="text-xs md:text-sm text-foreground-secondary">{item.institution}</p>
                   <p className="text-[10px] font-mono text-foreground-icons">{item.period}</p>
-                  <p className="text-xs text-foreground-icons leading-relaxed mt-1">{item.description}</p>
+                  <p className="text-xs md:text-sm text-foreground-icons leading-relaxed mt-1">{item.description}</p>
                 </div>
               </div>
             ))}
@@ -203,8 +203,8 @@ whyP2: language === "EN"
             <span className="text-[10px] font-mono text-foreground-icons uppercase tracking-widest">{t.whyTitle}</span>
           </div>
           <div className="flex flex-col gap-3 p-4 md:p-6">
-            <p className="text-xs text-foreground-secondary leading-relaxed">{t.whyP1}</p>
-            <p className="text-xs text-foreground-icons leading-relaxed">{t.whyP2}</p>
+            <p className="text-xs md:text-sm text-foreground-secondary leading-relaxed">{t.whyP1}</p>
+            <p className="text-xs md:text-sm text-foreground-icons leading-relaxed">{t.whyP2}</p>
           </div>
         </div>
 

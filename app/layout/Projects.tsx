@@ -69,7 +69,7 @@ export default function Projects() {
   }
 
   return (
-    <section className="flex flex-col lg:flex-row h-screen overflow-hidden divide-y divide-border lg:divide-y-0 lg:divide-x">
+    <section className="flex flex-col lg:flex-row h-[calc(100svh-3.5rem)] lg:h-screen overflow-hidden divide-y divide-border lg:divide-y-0 lg:divide-x">
 
       {/* ── LISTA (mobile + tablet: full width | desktop: 2/5) ── */}
       <div

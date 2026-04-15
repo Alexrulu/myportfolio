@@ -57,10 +57,53 @@ export default function About() {
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden divide-y divide-border">
+    <div className="flex flex-col h-[calc(100svh-3.5rem)] md:h-screen overflow-hidden divide-y divide-border">
 
       {/* ── HERO ── */}
       <section className="relative flex-[3] overflow-hidden group/hero">
+
+        {/* Aurora — desktop only */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none hidden lg:block" aria-hidden>
+          {/* Blob azul — esquina superior izquierda */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-20%', left: '-5%',
+              width: '60%', height: '75%',
+              borderRadius: '50%',
+              background: 'radial-gradient(ellipse, rgba(59,130,246,0.28) 0%, rgba(59,130,246,0.08) 45%, transparent 70%)',
+              filter: 'blur(55px)',
+              animation: 'aurora-drift-1 24s ease-in-out infinite',
+              willChange: 'transform',
+            }}
+          />
+          {/* Blob índigo — centro-derecha */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '15%', right: '0%',
+              width: '55%', height: '65%',
+              borderRadius: '50%',
+              background: 'radial-gradient(ellipse, rgba(99,102,241,0.22) 0%, rgba(99,102,241,0.06) 45%, transparent 70%)',
+              filter: 'blur(70px)',
+              animation: 'aurora-drift-2 30s ease-in-out infinite',
+              willChange: 'transform',
+            }}
+          />
+          {/* Blob violeta — inferior centro */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '-10%', left: '25%',
+              width: '45%', height: '45%',
+              borderRadius: '50%',
+              background: 'radial-gradient(ellipse, rgba(139,92,246,0.18) 0%, transparent 70%)',
+              filter: 'blur(65px)',
+              animation: 'aurora-drift-3 20s ease-in-out infinite',
+              willChange: 'transform',
+            }}
+          />
+        </div>
 
         {/* Foto */}
       <motion.img
@@ -78,7 +121,6 @@ export default function About() {
           lg:right-1/5
         "
         style={{
-          transform: "translateZ(0)",
           maskImage: "linear-gradient(to right, transparent 0%, black 30%), linear-gradient(to top, transparent 0%, black 20%)",
           WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 30%), linear-gradient(to top, transparent 0%, black 20%)",
           maskComposite: "intersect",
@@ -106,18 +148,18 @@ export default function About() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground-principal leading-none tracking-tight">
               Alexandro<br />Lucero
             </h1>
-            <h2 className="text-xs font-mono text-foreground-secondary mt-0.5">
+            <h2 className="text-xs md:text-sm font-mono text-foreground-secondary mt-0.5">
               {t.role}
             </h2>
           </div>
 
           {/* Bio + stats + botones */}
-          <div className="flex flex-col gap-">
+          <div className="flex flex-col gap-4">
             <TextGenerateEffect
               words={bio}
               duration={0.4}
               highlights={highlights}
-              className="text-xs md:w-2/3 lg:w-2/5"
+              className="text-xs md:text-sm md:w-2/3 lg:w-2/5"
             />
 
             {/* Stats mobile — fila horizontal */}
@@ -132,8 +174,13 @@ export default function About() {
 
             <div className="flex items-end justify-between">
               <div className="flex gap-2 flex-wrap">
-                <Button>{t.contactBtn}</Button>
-                <Button>{t.resumeBtn}</Button>
+                <Button href="/views/contact">{t.contactBtn}</Button>
+                <Button
+                  href={language === "EN" ? "/AlexandroLuceroCV-English-3-26.docx.pdf" : "/AlexandroLuceroCV-Spanish-3-26.docx.pdf"}
+                  external
+                >
+                  {t.resumeBtn}
+                </Button>
               </div>
 
               {/* Stats tablet/desktop — columna derecha */}
@@ -143,7 +190,7 @@ export default function About() {
                     <span className="text-2xl lg:text-4xl font-semibold text-foreground-principal leading-none">
                       {value}
                     </span>
-                    <span className="text-[10px] font-mono text-foreground-icons uppercase tracking-widest">
+                    <span className="text-[10px] lg:text-xs font-mono text-foreground-icons uppercase tracking-widest">
                       {label}
                     </span>
                   </div>
@@ -166,11 +213,11 @@ export default function About() {
               {t.myServices}
             </h2>
             {/* Descripción solo en desktop — tablet no tiene espacio */}
-            <p className="hidden lg:block text-xs text-foreground-secondary leading-relaxed">
+            <p className="hidden lg:block text-sm text-foreground-secondary leading-relaxed">
               {t.servicesDesc}
             </p>
           </div>
-          <Button className="self-start">{t.browseAll}</Button>
+          <Button href="/views/projects" className="self-start">{t.browseAll}</Button>
         </div>
 
         {/* Services list */}
@@ -183,7 +230,7 @@ export default function About() {
             <div
               key={i}
               onMouseEnter={() => setHoveredService(s.title)}
-              className="relative flex flex-col justify-between gap-2 p-5 md:p-4 lg:p-6 duration-200 cursor-pointer md:flex-1 border-b border-border md:border-b-0 last:border-b-0"
+              className="relative flex flex-col gap-2 p-5 md:p-4 lg:p-6 duration-200 md:flex-1 border-b border-border md:border-b-0 last:border-b-0"
             >
               {hoveredService === s.title && (
                 <motion.div
@@ -195,17 +242,12 @@ export default function About() {
               <div className={`absolute left-0 top-3 bottom-3 w-0.5 bg-foreground-icons duration-200 z-10
                 ${hoveredService === s.title ? "opacity-100" : "opacity-0"}
               `} />
-              <div className="relative z-10 flex items-start justify-between gap-2">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-foreground-icons">0{i + 1}</span>
-                    <p className="text-xs font-semibold text-foreground-principal">{s.title}</p>
-                  </div>
-                  <p className="text-xs text-foreground-secondary leading-relaxed">{s.description}</p>
+              <div className="relative z-10 flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-foreground-icons">0{i + 1}</span>
+                  <p className="text-sm font-semibold text-foreground-principal">{s.title}</p>
                 </div>
-                <span className={`text-sm duration-200 flex-shrink-0
-                  ${hoveredService === s.title ? "text-foreground-secondary" : "text-foreground-icons"}
-                `}>→</span>
+                <p className="text-xs md:text-sm text-foreground-secondary leading-relaxed">{s.description}</p>
               </div>
             </div>
           ))}
