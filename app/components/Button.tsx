@@ -12,7 +12,7 @@ const cls = (className = '') => `
 `
 
 const AccentBar = () => (
-  <div className="absolute left-0 top-1 bottom-1 w-[2px] bg-foreground-icons opacity-0 group-hover:opacity-100 group-active:opacity-100 duration-200" />
+  <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-foreground-icons opacity-0 group-hover:opacity-100 group-active:opacity-100 duration-200" />
 )
 
 export default function Button({

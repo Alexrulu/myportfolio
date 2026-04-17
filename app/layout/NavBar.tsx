@@ -106,6 +106,34 @@ export default function NavBar() {
               </a>
             </li>
           ))}
+
+          {/* Easter egg ??? */}
+          <li onMouseEnter={() => setHoveredSecondary("easter")}>
+            <Link href="/views/easteregg"
+              className={`relative flex items-center gap-3 px-4 py-2.5 cursor-pointer duration-200 ${hoveredSecondary === "easter" ? "text-foreground-principal" : "text-foreground-icons"}`}
+            >
+              {hoveredSecondary === "easter" && (
+                <motion.div layoutId="secondary-hover" className="absolute inset-0 bg-white/5" transition={{ type: "spring", stiffness: 400, damping: 35 }} />
+              )}
+              <div className={`absolute left-0 top-2 bottom-2 w-0.5 bg-foreground-icons duration-200 z-10 ${hoveredSecondary === "easter" ? "opacity-100" : "opacity-0"}`} />
+              <span className="relative z-10 w-4 h-4 flex items-center justify-center shrink-0">
+                <motion.span
+                  className="text-[10px] font-mono"
+                  animate={{ opacity: [0.4, 1, 0.4] }}
+                  transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  ?
+                </motion.span>
+              </span>
+              <motion.span
+                className="relative z-10 text-[10px] font-mono tracking-widest"
+                animate={{ opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                ???
+              </motion.span>
+            </Link>
+          </li>
         </ul>
 
         <div className="flex mt-auto border-t border-border">
@@ -177,6 +205,20 @@ export default function NavBar() {
                 <span className="text-xs text-foreground-icons">↗</span>
               </a>
             ))}
+
+            {/* Easter egg ??? */}
+            <Link href="/views/easteregg" onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-3.5 active:bg-white/5"
+            >
+              <span className="w-4 h-4 flex items-center justify-center text-foreground-icons shrink-0 text-[10px] font-mono">?</span>
+              <motion.span
+                className="text-sm text-foreground-icons flex-1 font-mono tracking-widest"
+                animate={{ opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                ???
+              </motion.span>
+            </Link>
 
             {/* Language toggle */}
             <div className="flex">
