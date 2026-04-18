@@ -7,15 +7,15 @@ import { motion } from "motion/react"
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-type BlockType = "grass" | "wood" | "log" | "door" | "glass" | "monitor" | "desk" | "coffee" | "bug"
+type BlockType = "grass" | "wood" | "log" | "door" | "glass" | "monitor" | "desk" | "coffee" | "bug" | "dirt" | "plant"
 
 const BLOCK_DEFS: { id: BlockType; label: string; emoji: string; key: string }[] = [
-  { id: "grass",   label: "Grass",   emoji: "🌿", key: "1" },
+  { id: "plant",   label: "Planta",  emoji: "🪴", key: "1" },
   { id: "wood",    label: "Madera",  emoji: "🪵", key: "2" },
-  { id: "log",     label: "Tronco",  emoji: "🌲", key: "3" },
+  { id: "log",     label: "Concreto", emoji: "🪨", key: "3" },
   { id: "door",    label: "Puerta",  emoji: "🚪", key: "4" },
   { id: "glass",   label: "Vidrio",  emoji: "🪟", key: "5" },
-  { id: "monitor", label: "Monitor", emoji: "🖥️", key: "6" },
+  { id: "monitor", label: "PC",      emoji: "🖥️", key: "6" },
   { id: "desk",    label: "Mesa",    emoji: "🪑", key: "7" },
   { id: "coffee",  label: "Café",    emoji: "☕", key: "8" },
   { id: "bug",     label: "Bug 💥",  emoji: "🐛", key: "9" },
@@ -47,7 +47,7 @@ function noisy(colors: string[], seed: number) {
   return toTex(c)
 }
 
-function grassTop()  { return noisy(["#5A8C3C","#4A7230","#6CA845","#528534","#4F7B2F"], 0) }
+function grassTop()  { return noisy(["#4EAA2C","#3E9220","#62C038","#46A028","#58B830"], 0) }
 function dirtTex()   { return noisy(["#8B5E3C","#7A4E2C","#9A6E4C","#6B3E1C","#A07040"], 2) }
 function metalTex()  { return noisy(["#2A2A3A","#252535","#303045","#1E1E2E","#282838"], 10) }
 
@@ -56,8 +56,8 @@ function grassSide(): THREE.CanvasTexture {
   for (let y = 0; y < 16; y++)
     for (let x = 0; x < 16; x++) {
       const v = hn(x, y, 1)
-      ctx.fillStyle = y < 3
-        ? (["#5A8C3C","#4A7230","#6CA845"])[Math.floor(v * 3)]
+      ctx.fillStyle = y < 4
+        ? (["#4EAA2C","#3E9220","#62C038","#46A028"])[Math.floor(v * 4)]
         : (["#8B5E3C","#7A4E2C","#9A6E4C","#6B3E1C"])[Math.floor(v * 4)]
       ctx.fillRect(x, y, 1, 1)
     }
@@ -65,42 +65,78 @@ function grassSide(): THREE.CanvasTexture {
 }
 function woodSide(): THREE.CanvasTexture {
   const [c, ctx] = px16()
-  for (let y = 0; y < 16; y++)
+  // 3 tablas horizontales con colores ligeramente distintos — pino/miel cálido
+  const planks = [
+    ["#D4A248","#CCA040","#DCA852","#C89840","#E0AA55"],
+    ["#C89840","#D2A04A","#CAA044","#D8A850","#BF9238"],
+    ["#DCA852","#D0A248","#E2B05A","#C89840","#D4A04C"],
+  ]
+  for (let y = 0; y < 16; y++) {
+    const seam = y === 5 || y === 11
+    const pi   = y < 5 ? 0 : y < 11 ? 1 : 2
     for (let x = 0; x < 16; x++) {
-      const v = (hn(x, y, 4) + hn(x, 0, 4) * 0.3) % 1
-      ctx.fillStyle = (["#8B6340","#7A5230","#9A7450","#6B4220","#A07855"])[Math.floor(v * 5)]
+      if (seam) {
+        ctx.fillStyle = "#8B6020"
+      } else {
+        // Veta horizontal sutil: módulo del ruido más la coordenada x
+        const n = hn(x, y, 4)
+        ctx.fillStyle = planks[pi][Math.floor(n * planks[pi].length)]
+      }
       ctx.fillRect(x, y, 1, 1)
     }
+  }
+  // Vetas finas dentro de cada tabla
+  ctx.fillStyle = "rgba(90,50,10,0.18)"
+  for (let y = 1; y < 16; y += 2) ctx.fillRect(0, y, 16, 1)
+  // Clavos pequeños en cada tabla
+  ctx.fillStyle = "#7A5010"
+  ;[[1,2],[14,2],[1,8],[14,8],[1,13],[14,13]].forEach(([nx,ny]) => ctx.fillRect(nx,ny,1,1))
   return toTex(c)
 }
 function woodTop(): THREE.CanvasTexture {
   const [c, ctx] = px16()
-  for (let y = 0; y < 16; y++)
+  // Vista desde arriba: tablas en dirección X con seams en Z
+  for (let y = 0; y < 16; y++) {
+    const seam = y === 5 || y === 11
     for (let x = 0; x < 16; x++) {
-      ctx.fillStyle = Math.floor(Math.sqrt((x-7.5)**2+(y-7.5)**2)) % 2 === 0 ? "#8B6340" : "#7A5230"
+      if (seam) {
+        ctx.fillStyle = "#8B6020"
+      } else {
+        const n = hn(x, y, 5)
+        ctx.fillStyle = (["#D4A248","#CCA040","#DCA852","#C89840","#D8A64E"])[Math.floor(n * 5)]
+      }
       ctx.fillRect(x, y, 1, 1)
     }
+  }
+  ctx.fillStyle = "rgba(90,50,10,0.12)"
+  for (let y = 1; y < 16; y += 2) ctx.fillRect(0, y, 16, 1)
   return toTex(c)
 }
 function logSide(): THREE.CanvasTexture {
+  // Concreto pulido moderno
   const [c, ctx] = px16()
   for (let y = 0; y < 16; y++)
     for (let x = 0; x < 16; x++) {
-      ctx.fillStyle = (["#5C3A1E","#6B4420","#4A2A10","#7A5030"])[Math.floor(hn(x, y, 20) * 4)]
+      ctx.fillStyle = (["#A8AAAC","#9EA0A2","#B2B4B6","#A4A6A8","#9C9EA0"])[Math.floor(hn(x,y,20)*5)]
       ctx.fillRect(x, y, 1, 1)
     }
-  ctx.fillStyle = "rgba(0,0,0,0.3)"
-  for (let x = 3; x < 16; x += 4) ctx.fillRect(x, 0, 1, 16)
+  // Juntas de encofrado cada 8px
+  ctx.fillStyle = "rgba(70,72,74,0.35)"
+  ctx.fillRect(0, 7, 16, 1); ctx.fillRect(0, 8, 16, 1)
+  ctx.fillStyle = "rgba(180,182,184,0.4)"
+  ctx.fillRect(0, 0, 16, 1); ctx.fillRect(0, 15, 16, 1)
   return toTex(c)
 }
 function logTop(): THREE.CanvasTexture {
+  // Concreto liso desde arriba
   const [c, ctx] = px16()
   for (let y = 0; y < 16; y++)
     for (let x = 0; x < 16; x++) {
-      const d = Math.sqrt((x-7.5)**2+(y-7.5)**2)
-      ctx.fillStyle = Math.floor(d * 0.75) % 2 === 0 ? "#6B4420" : "#5A3318"
+      ctx.fillStyle = (["#A8AAAC","#B0B2B4","#9EA0A2","#A6A8AA"])[Math.floor(hn(x,y,21)*4)]
       ctx.fillRect(x, y, 1, 1)
     }
+  ctx.fillStyle = "rgba(70,72,74,0.2)"
+  ctx.fillRect(7, 0, 2, 16); ctx.fillRect(0, 7, 16, 2)
   return toTex(c)
 }
 
@@ -135,33 +171,31 @@ function doorTexTop(): THREE.CanvasTexture {
 
 function glassTex(): THREE.CanvasTexture {
   const [c, ctx] = px16()
-  ctx.clearRect(0,0,16,16)
-  ctx.fillStyle = "rgba(190,225,255,0.35)"
-  ctx.fillRect(2,2,5,5); ctx.fillRect(9,2,5,5); ctx.fillRect(2,9,5,5); ctx.fillRect(9,9,5,5)
-  ctx.fillStyle = "#CCDDEEBB"
-  ctx.fillRect(0,0,16,2); ctx.fillRect(0,14,16,2); ctx.fillRect(0,0,2,16); ctx.fillRect(14,0,2,16)
-  ctx.fillRect(7,0,2,16); ctx.fillRect(0,7,16,2)
-  ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.fillRect(3,3,2,1); ctx.fillRect(10,3,2,1)
+  ctx.clearRect(0, 0, 16, 16)
+  // Tinte celeste muy sutil en todo el panel
+  ctx.fillStyle = "rgba(180, 220, 255, 0.12)"
+  ctx.fillRect(0, 0, 16, 16)
+  // Marco fino (1px) — blanco con leve tono azulado
+  ctx.fillStyle = "#DDEEFF"
+  ctx.fillRect(0, 0, 16, 1); ctx.fillRect(0, 15, 16, 1)
+  ctx.fillRect(0, 1, 1, 14); ctx.fillRect(15, 1, 1, 14)
+  // Centro: transparente
   return toTex(c)
 }
 function deskTop(): THREE.CanvasTexture {
   const [c, ctx] = px16()
   for (let y = 0; y < 16; y++)
     for (let x = 0; x < 16; x++) {
-      ctx.fillStyle = (["#C0A060","#B09050","#D0B070","#A88040"])[Math.floor(hn(x, y, 30) * 4)]
+      ctx.fillStyle = (["#F2F0EC","#EAE8E4","#F8F6F2","#ECEAE6","#F0EEE8"])[Math.floor(hn(x, y, 30) * 5)]
       ctx.fillRect(x, y, 1, 1)
     }
-  ctx.fillStyle = "#777777"; ctx.fillRect(3,5,10,6)
-  ctx.fillStyle = "#555555"
-  for (let kx = 0; kx < 5; kx++) { ctx.fillRect(4+kx*2,6,1,1); ctx.fillRect(4+kx*2,8,1,1) }
-  ctx.fillRect(5,10,6,1)
   return toTex(c)
 }
 function deskSide(): THREE.CanvasTexture {
   const [c, ctx] = px16()
-  ctx.fillStyle = "#8B6340"; ctx.fillRect(0,0,16,16)
-  ctx.fillStyle = "#5C3818"; ctx.fillRect(0,0,3,16); ctx.fillRect(13,0,3,16)
-  ctx.fillStyle = "#A07850"; ctx.fillRect(0,0,16,3)
+  ctx.fillStyle = "#ECEAE6"; ctx.fillRect(0,0,16,16)
+  ctx.fillStyle = "#D4D2CE"; ctx.fillRect(0,0,2,16); ctx.fillRect(14,0,2,16)
+  ctx.fillStyle = "#F8F6F2"; ctx.fillRect(0,0,16,2)
   return toTex(c)
 }
 function monitorFront(): THREE.CanvasTexture {
@@ -190,21 +224,33 @@ function coffeeSide(): THREE.CanvasTexture {
   ctx.fillStyle="#AAAAAA"; ctx.fillRect(5,1,1,1); ctx.fillRect(10,1,1,1)
   return toTex(c)
 }
+// Ceramic pot — light cream/marble tones
+function plantPotTex(): THREE.CanvasTexture {
+  const [c, ctx] = px16()
+  for (let y = 0; y < 16; y++)
+    for (let x = 0; x < 16; x++) {
+      ctx.fillStyle = (["#DDD4CA","#E8DDD4","#CAC0B8","#D8CEC6","#F0E8E0"])[Math.floor(hn(x, y, 60) * 5)]
+      ctx.fillRect(x, y, 1, 1)
+    }
+  // Subtle marble vein lines
+  ctx.fillStyle = "rgba(160,140,130,0.25)"
+  for (let i = 2; i < 16; i += 5) ctx.fillRect(i, 0, 1, 16)
+  return toTex(c)
+}
+// Worm skin: reddish mottled surface used on the 3-D segments
 function bugTex(): THREE.CanvasTexture {
   const [c, ctx] = px16()
-  ctx.fillStyle = "#0D0608"; ctx.fillRect(0, 0, 16, 16)
-  ctx.fillStyle = "#CC2222"
-  ctx.fillRect(1, 5, 4, 5); ctx.fillRect(5, 4, 3, 6); ctx.fillRect(8, 5, 3, 5); ctx.fillRect(11, 6, 3, 3)
-  ctx.fillStyle = "#EE5555"
-  ctx.fillRect(1, 5, 4, 2); ctx.fillRect(5, 4, 3, 2); ctx.fillRect(8, 5, 3, 2); ctx.fillRect(11, 6, 3, 1)
-  ctx.fillStyle = "#881111"
-  ctx.fillRect(5, 5, 1, 5); ctx.fillRect(8, 5, 1, 5); ctx.fillRect(11, 6, 1, 3)
-  ctx.fillStyle = "#FFFF00"
-  ctx.fillRect(2, 6, 1, 1); ctx.fillRect(2, 8, 1, 1)
-  ctx.fillStyle = "#AA1111"
-  ctx.fillRect(2, 4, 1, 1); ctx.fillRect(4, 3, 1, 1)
-  ctx.fillRect(6, 3, 1, 1); ctx.fillRect(9, 3, 1, 1)
-  ctx.fillRect(6, 10, 1, 2); ctx.fillRect(9, 10, 1, 2); ctx.fillRect(12, 9, 1, 2)
+  for (let y = 0; y < 16; y++)
+    for (let x = 0; x < 16; x++) {
+      ctx.fillStyle = (["#CC2222","#DD3333","#BB1111","#EE4444","#CC1A1A"])[Math.floor(hn(x, y, 42) * 5)]
+      ctx.fillRect(x, y, 1, 1)
+    }
+  // Subtle ring grooves (segment separators)
+  ctx.fillStyle = "rgba(0,0,0,0.28)"
+  for (let x = 3; x < 16; x += 4) ctx.fillRect(x, 0, 1, 16)
+  // Belly highlight
+  ctx.fillStyle = "rgba(255,100,100,0.18)"
+  for (let x = 0; x < 16; x++) ctx.fillRect(x, 11, 1, 5)
   return toTex(c)
 }
 
@@ -220,6 +266,7 @@ interface Textures {
   deskTop: THREE.CanvasTexture; deskSide: THREE.CanvasTexture
   coffeeTop: THREE.CanvasTexture; coffeeSide: THREE.CanvasTexture
   bug: THREE.CanvasTexture
+  plantPot: THREE.CanvasTexture
 }
 function buildTextures(): Textures {
   return {
@@ -232,23 +279,42 @@ function buildTextures(): Textures {
     deskTop: deskTop(), deskSide: deskSide(),
     coffeeTop: coffeeTop(), coffeeSide: coffeeSide(),
     bug: bugTex(),
+    plantPot: plantPotTex(),
   }
 }
-function mat(t: THREE.Texture)  { return new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide }) }
-function gmat(t: THREE.Texture) { return new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide, transparent: true, alphaTest: 0.05 }) }
+// ── Shared geometry & material cache ─────────────────────────────────────────
+// Reuse a single BoxGeometry(1,1,1) for all standard cubes (saves GPU memory)
+const _geo1 = new THREE.BoxGeometry(1, 1, 1)
+
+// Cache materials by texture UUID — avoids creating thousands of duplicate
+// MeshLambertMaterial instances (floor alone was creating ~1500 duplicates)
+const _matCache  = new Map<string, THREE.MeshLambertMaterial>()
+const _gmatCache = new Map<string, THREE.MeshLambertMaterial>()
+function mat(t: THREE.Texture): THREE.MeshLambertMaterial {
+  if (!_matCache.has(t.uuid))
+    _matCache.set(t.uuid, new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide }))
+  return _matCache.get(t.uuid)!
+}
+function gmat(t: THREE.Texture): THREE.MeshLambertMaterial {
+  if (!_gmatCache.has(t.uuid))
+    _gmatCache.set(t.uuid, new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide, transparent: true, alphaTest: 0.05 }))
+  return _gmatCache.get(t.uuid)!
+}
 
 // Used for HUD hand-block (always a simple 1×1×1 cube)
 function getMaterials(type: BlockType, tx: Textures): THREE.MeshLambertMaterial[] {
   switch (type) {
     case "grass":   return [mat(tx.grassSide),mat(tx.grassSide),mat(tx.grassTop),mat(tx.dirt),mat(tx.grassSide),mat(tx.grassSide)]
+    case "dirt":    return Array(6).fill(null).map(() => mat(tx.dirt))
     case "wood":    return [mat(tx.woodSide),mat(tx.woodSide),mat(tx.woodTop),mat(tx.woodTop),mat(tx.woodSide),mat(tx.woodSide)]
     case "log":     return [mat(tx.logSide),mat(tx.logSide),mat(tx.logTop),mat(tx.logTop),mat(tx.logSide),mat(tx.logSide)]
     case "door":    return Array(6).fill(null).map(() => mat(tx.doorBot))
-    case "glass":   return Array(6).fill(null).map(() => new THREE.MeshLambertMaterial({ map: tx.glass, side: THREE.DoubleSide, transparent: true, opacity: 0.55 }))
+    case "glass":   return Array(6).fill(null).map(() => new THREE.MeshLambertMaterial({ map: tx.glass, transparent: true, opacity: 0.55, depthWrite: false }))
     case "monitor": return [mat(tx.metal),mat(tx.metal),mat(tx.metal),mat(tx.metal),mat(tx.monitorFront),mat(tx.metal)]
     case "desk":    return [mat(tx.deskSide),mat(tx.deskSide),mat(tx.deskTop),mat(tx.deskSide),mat(tx.deskSide),mat(tx.deskSide)]
     case "coffee":  return [mat(tx.coffeeSide),mat(tx.coffeeSide),mat(tx.coffeeTop),mat(tx.coffeeSide),mat(tx.coffeeSide),mat(tx.coffeeSide)]
     case "bug":     return Array(6).fill(null).map(() => mat(tx.bug))
+    case "plant":   return Array(6).fill(null).map(() => mat(tx.plantPot))
   }
 }
 
@@ -261,8 +327,117 @@ function createVisual(type: BlockType, tx: Textures, facing = 0): THREE.Object3D
     case "grass":
     case "wood":
     case "log":
-    case "bug":
-      return new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), getMaterials(type, tx))
+    case "dirt":
+      return new THREE.Mesh(_geo1, getMaterials(type, tx))
+
+    case "bug": {
+      const g = new THREE.Group()
+      g.rotation.y = facing
+      const bMat   = mat(tx.bug)
+      const eyeMat = new THREE.MeshLambertMaterial({ color: 0xFFEE22 })
+      const pupMat = new THREE.MeshLambertMaterial({ color: 0x111111 })
+      const dkMat  = new THREE.MeshLambertMaterial({ color: 0x881111 })
+
+      // ── Body segments (head → tail, gentle S-curve) ──
+      const segs: [number,number,number,number,number,number][] = [
+        [ -0.08,  0.06, -0.12,  0.36, 0.34, 0.34 ], // head
+        [  0.06,  0.01,  0.05,  0.28, 0.26, 0.26 ], // segment 1
+        [ -0.04, -0.05,  0.19,  0.22, 0.20, 0.20 ], // segment 2
+        [  0.04, -0.12,  0.30,  0.14, 0.12, 0.14 ], // tail
+      ]
+      segs.forEach(([x, y, z, w, h, d]) => {
+        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), bMat)
+        m.position.set(x, y, z); g.add(m)
+      })
+
+      // ── Eyes on head front face (z ≈ −0.29) ──
+      const eyeZ = -0.31
+      ;[ [-0.07, 0.12], [0.07, 0.12] ].forEach(([ex, ey]) => {
+        const eye = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.09, 0.04), eyeMat)
+        eye.position.set(ex, ey, eyeZ); g.add(eye)
+        const pup = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.02), pupMat)
+        pup.position.set(ex, ey, eyeZ - 0.03); g.add(pup)
+      })
+
+      // ── Antennae on top of head ──
+      ;[ [-0.07, 0.3, -0.16, 0.3], [0.07, 0.3, -0.16, -0.3] ].forEach(([ax, ay, az, tilt]) => {
+        const stem = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.15, 0.04), dkMat)
+        stem.rotation.z = tilt as number
+        stem.position.set(ax as number, ay as number, az as number); g.add(stem)
+        const tip = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.07), eyeMat)
+        tip.position.set(
+          (ax as number) + (tilt as number) * 0.07,
+          (ay as number) + 0.10,
+          az as number
+        ); g.add(tip)
+      })
+
+      // ── Legs: 3 pairs, dangling from segment undersides ──
+      // [segCenterX, segCenterY, segCenterZ, segHalfW, segHalfH]
+      const legData: [number,number,number,number,number][] = [
+        [ -0.08,  0.06, -0.12,  0.18, 0.17 ],
+        [  0.06,  0.01,  0.05,  0.14, 0.13 ],
+        [ -0.04, -0.05,  0.19,  0.11, 0.10 ],
+      ]
+      legData.forEach(([sx, sy, sz, hw, hh]) => {
+        const legY = sy - hh - 0.03
+        ;[ -(hw + 0.07),  (hw + 0.07) ].forEach(offX => {
+          const leg = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.05, 0.06), dkMat)
+          leg.position.set(sx + offX, legY, sz); g.add(leg)
+        })
+      })
+
+      return g
+    }
+
+    case "plant": {
+      const g = new THREE.Group()
+      const potMat  = mat(tx.plantPot)
+      const rimMat  = new THREE.MeshLambertMaterial({ color: 0xB8ACA4 })
+      const soilMat = new THREE.MeshLambertMaterial({ color: 0x2A180A })
+      const lDark   = new THREE.MeshLambertMaterial({ color: 0x1A5C28, side: THREE.DoubleSide })
+      const lMid    = new THREE.MeshLambertMaterial({ color: 0x2E8040, side: THREE.DoubleSide })
+      const lLight  = new THREE.MeshLambertMaterial({ color: 0x50A85A, side: THREE.DoubleSide })
+
+      // ── Pot (properly stacked, base bottom = −0.50) ──
+      // base:  h=0.03  bot=−0.50  top=−0.47
+      // lower: h=0.11  bot=−0.47  top=−0.36
+      // upper: h=0.12  bot=−0.36  top=−0.24
+      // rim:   h=0.04  bot=−0.24  top=−0.20
+      const base  = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.03, 0.17), rimMat)
+      base.position.set(0, -0.485, 0); g.add(base)
+      const lower = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.11, 0.20), potMat)
+      lower.position.set(0, -0.415, 0); g.add(lower)
+      const upper = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.12, 0.25), potMat)
+      upper.position.set(0, -0.30, 0); g.add(upper)
+      const rim   = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.04, 0.28), rimMat)
+      rim.position.set(0, -0.22, 0); g.add(rim)
+      const soil  = new THREE.Mesh(new THREE.BoxGeometry(0.23, 0.02, 0.23), soilMat)
+      soil.position.set(0, -0.205, 0); g.add(soil)
+
+      // ── Succulent leaves ──
+      const mkLeaf = (w: number, h: number, d: number, lMat: THREE.Material,
+                      px: number, py: number, pz: number, rx: number, rz: number) => {
+        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), lMat)
+        m.position.set(px, py, pz); m.rotation.x = rx; m.rotation.z = rz; g.add(m)
+      }
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2
+        mkLeaf(0.05, 0.17, 0.03, i % 3 === 0 ? lLight : lMid,
+          Math.sin(a) * 0.06, -0.13, Math.cos(a) * 0.06,
+          Math.cos(a) * 0.50, -Math.sin(a) * 0.50)
+      }
+      for (let i = 0; i < 4; i++) {
+        const a = (i / 4) * Math.PI * 2 + Math.PI / 4
+        mkLeaf(0.04, 0.13, 0.03, lDark,
+          Math.sin(a) * 0.03, -0.11, Math.cos(a) * 0.03,
+          Math.cos(a) * 0.28, -Math.sin(a) * 0.28)
+      }
+      const center = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.15, 0.03), lMid)
+      center.position.set(0, -0.07, 0); g.add(center)
+
+      return g
+    }
 
     // 2-block-tall door: two panel halves so the texture isn't stretched
     // The outer group sits at (x, rootY + 0.5, z) — midpoint of both block slots
@@ -285,54 +460,134 @@ function createVisual(type: BlockType, tx: Textures, facing = 0): THREE.Object3D
       return outer
     }
 
-    case "glass":
-      return new THREE.Mesh(
-        new THREE.BoxGeometry(0.92, 0.92, 0.08),
-        new THREE.MeshLambertMaterial({ map: tx.glass, side: THREE.DoubleSide, transparent: true, opacity: 0.42, alphaTest: 0.01 })
-      )
+    case "glass": {
+      const glassMat = new THREE.MeshLambertMaterial({
+        map: tx.glass, transparent: true, opacity: 0.92, alphaTest: 0.01,
+        side: THREE.DoubleSide, depthWrite: false,
+      })
+      const m = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 0.06), glassMat)
+      m.rotation.y = facing
+      return m
+    }
 
     case "monitor": {
       const g = new THREE.Group()
+      g.rotation.y = facing
+      const mMat = mat(tx.metal)
+      // Monitor — pushed toward the back (-Z local = away from player)
       const screen = new THREE.Mesh(
-        new THREE.BoxGeometry(0.82, 0.56, 0.07),
-        [mat(tx.metal),mat(tx.metal),mat(tx.metal),mat(tx.metal),mat(tx.monitorFront),mat(tx.metal)]
+        new THREE.BoxGeometry(0.78, 0.52, 0.06),
+        [mMat,mMat,mMat,mMat,mat(tx.monitorFront),mMat]
       )
-      screen.position.set(0, 0.1, 0); g.add(screen)
-      const stand = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.22, 0.06), mat(tx.metal))
-      stand.position.set(0, -0.22, 0); g.add(stand)
-      const base = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.04, 0.26), mat(tx.metal))
-      base.position.set(0, -0.34, 0); g.add(base)
+      // mBase: h=0.03  bot=−0.50  top=−0.47  center=−0.485
+      // stand: h=0.20  bot=−0.47  top=−0.27  center=−0.37
+      // screen:h=0.52  bot=−0.27  top=+0.25  center=−0.01
+      screen.position.set(0, -0.01, -0.10); g.add(screen)
+      const stand = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.20, 0.05), mMat)
+      stand.position.set(0, -0.37, -0.10); g.add(stand)
+      const mBase = new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.03, 0.20), mMat)
+      mBase.position.set(0, -0.485, -0.10); g.add(mBase)
+      // Keyboard — toward front (+Z local = toward player)
+      const kbMat = new THREE.MeshLambertMaterial({ color: 0x1A1A2A })
+      const kb = new THREE.Mesh(new THREE.BoxGeometry(0.60, 0.03, 0.22), kbMat)
+      kb.position.set(0, -0.485, 0.16); g.add(kb)
+      // Keyboard key rows
+      const keysMat = new THREE.MeshLambertMaterial({ color: 0x2E2E40 })
+      for (let row = 0; row < 3; row++) {
+        const row3d = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.01, 0.04), keysMat)
+        row3d.position.set(0, -0.470, 0.10 + row * 0.05); g.add(row3d)
+      }
+      // Mouse — right side of keyboard (+X local)
+      const mouseMat = new THREE.MeshLambertMaterial({ color: 0x222232 })
+      const mouse = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.03, 0.14), mouseMat)
+      mouse.position.set(0.37, -0.485, 0.16); g.add(mouse)
+      const divider = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.015, 0.08), keysMat)
+      divider.position.set(0.37, -0.470, 0.14); g.add(divider)
       return g
     }
 
     case "desk": {
       const g = new THREE.Group()
+      g.rotation.y = facing
       const top = new THREE.Mesh(
-        new THREE.BoxGeometry(0.95, 0.08, 0.95),
+        new THREE.BoxGeometry(0.98, 0.08, 0.98),  // touches block edges
         [mat(tx.deskSide),mat(tx.deskSide),mat(tx.deskTop),mat(tx.deskSide),mat(tx.deskSide),mat(tx.deskSide)]
       )
-      top.position.set(0, 0.3, 0); g.add(top)
-      const legGeo = new THREE.BoxGeometry(0.07, 0.7, 0.07)
+      top.position.set(0, 0.46, 0); g.add(top)   // top = +0.50 (flush with block top)
+      const legGeo = new THREE.BoxGeometry(0.08, 0.92, 0.08)   // full block height minus tabletop
       const legMat = mat(tx.deskSide)
-      ;([[0.42,0.42],[0.42,-0.42],[-0.42,0.42],[-0.42,-0.42]] as [number,number][]).forEach(([lx,lz]) => {
+      ;([[0.44,0.44],[0.44,-0.44],[-0.44,0.44],[-0.44,-0.44]] as [number,number][]).forEach(([lx,lz]) => {
         const leg = new THREE.Mesh(legGeo, legMat)
-        leg.position.set(lx, -0.09, lz); g.add(leg)
+        leg.position.set(lx, -0.04, lz); g.add(leg)  // bottom = −0.50, top = 0.42 (under tabletop)
       })
       return g
     }
 
     case "coffee": {
       const g = new THREE.Group()
+      g.rotation.y = facing
       const body = new THREE.Mesh(
-        new THREE.BoxGeometry(0.32, 0.42, 0.32),
+        new THREE.BoxGeometry(0.22, 0.28, 0.22),
         [mat(tx.coffeeSide),mat(tx.coffeeSide),mat(tx.coffeeTop),mat(tx.coffeeSide),mat(tx.coffeeSide),mat(tx.coffeeSide)]
       )
-      body.position.set(0, -0.15, 0); g.add(body)
-      const handle = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.16, 0.04), mat(tx.coffeeSide))
-      handle.position.set(0.2, -0.15, 0); g.add(handle)
+      body.position.set(0, -0.36, 0); g.add(body)   // bottom = −0.50
+      const handle = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.10, 0.03), mat(tx.coffeeSide))
+      handle.position.set(0.135, -0.36, 0); g.add(handle)
       return g
     }
   }
+}
+
+// ── Sky & Landscape ───────────────────────────────────────────────────────────
+
+function buildSkyDome(): THREE.Mesh {
+  // 2×256 gradient canvas — top=zenith, bottom=underground (hidden by floor)
+  const c = document.createElement("canvas"); c.width = 2; c.height = 256
+  const ctx = c.getContext("2d")!
+  const g = ctx.createLinearGradient(0, 0, 0, 256)
+  g.addColorStop(0.00, "#0C0618")   // zenith — deep violet-black
+  g.addColorStop(0.20, "#1C0A30")   // upper sky — dark purple
+  g.addColorStop(0.42, "#641A40")   // mid sky — magenta-purple
+  g.addColorStop(0.60, "#AA2818")   // lower sky — deep red-orange
+  g.addColorStop(0.72, "#D85010")   // near horizon — orange
+  g.addColorStop(0.83, "#EC8008")   // horizon — amber
+  g.addColorStop(1.00, "#C87820")   // underground (never visible)
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 2, 256)
+  const dome = new THREE.Mesh(
+    new THREE.SphereGeometry(75, 24, 12),
+    new THREE.MeshBasicMaterial({
+      map: new THREE.CanvasTexture(c),
+      side: THREE.BackSide, depthWrite: false, depthTest: false, fog: false,
+    })
+  )
+  dome.renderOrder = -2
+  dome.frustumCulled = false
+  return dome
+}
+
+function buildSunDisc(): THREE.Mesh {
+  // Radial glow texture on a billboard quad
+  const c = document.createElement("canvas"); c.width = c.height = 64
+  const ctx = c.getContext("2d")!
+  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32)
+  g.addColorStop(0.00, "rgba(255,255,215,1.00)")
+  g.addColorStop(0.18, "rgba(255,215,70,0.92)")
+  g.addColorStop(0.45, "rgba(255,105,10,0.50)")
+  g.addColorStop(0.75, "rgba(255,50,0,0.15)")
+  g.addColorStop(1.00, "rgba(220,40,0,0.00)")
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 64, 64)
+  const mesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(12, 12),
+    new THREE.MeshBasicMaterial({
+      map: new THREE.CanvasTexture(c),
+      transparent: true, depthWrite: false,
+      blending: THREE.AdditiveBlending, fog: false,
+    })
+  )
+  // Low on the western horizon
+  mesh.position.set(-26, 13, -30)
+  mesh.lookAt(new THREE.Vector3(7.5, 1.5, 7.5))
+  return mesh
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -345,6 +600,7 @@ export default function BuildGame() {
 
   const selectedRef    = useRef<BlockType>("grass")
   const requestLockRef = useRef<() => void>(() => {})
+  const resetRef       = useRef<() => void>(() => {})
   const updateHandRef  = useRef<((t: BlockType) => void) | null>(null)
   const worldRef       = useRef(new Map<string, BlockType>())
   const visualsRef     = useRef(new Map<string, THREE.Object3D>())
@@ -356,8 +612,7 @@ export default function BuildGame() {
 
     // ── Scene ──
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color("#5C8AC0")
-    scene.fog = new THREE.Fog("#7AABD8", 18, 35)
+    scene.fog = new THREE.Fog("#CC6828", 16, 32)
 
     const cam = new THREE.PerspectiveCamera(75, W / H, 0.05, 100)
 
@@ -368,9 +623,23 @@ export default function BuildGame() {
     renderer.autoClear = false
     container.appendChild(renderer.domElement)
 
-    scene.add(new THREE.AmbientLight("#c8dff5", 0.7))
-    const sun = new THREE.DirectionalLight("#fff8e0", 1.0)
-    sun.position.set(12, 20, 8); sun.castShadow = true; scene.add(sun)
+    scene.add(new THREE.AmbientLight("#906898", 0.60))
+    const sun = new THREE.DirectionalLight("#FFCC68", 1.05)
+    // Match the visual sun disc position exactly so shadows fall the right way
+    sun.position.set(-26, 13, -30)
+    sun.target.position.set(7.5, 0, 7.5)
+    scene.add(sun.target)
+    sun.castShadow = true
+    sun.shadow.bias = -0.0015
+    sun.shadow.mapSize.width  = 2048
+    sun.shadow.mapSize.height = 2048
+    sun.shadow.camera.near = 0.5
+    sun.shadow.camera.far  = 80
+    sun.shadow.camera.left   = -30
+    sun.shadow.camera.right  =  30
+    sun.shadow.camera.top    =  30
+    sun.shadow.camera.bottom = -30
+    scene.add(sun)
 
     // ── HUD scene ──
     const hudScene = new THREE.Scene()
@@ -437,7 +706,8 @@ export default function BuildGame() {
         // Single visual centred between the two block slots
         const visual = createVisual("door", tx, facing)
         visual.position.set(x, y + 0.5, z)
-        visual.userData = { key: k, x, y, z, baseY: y }
+        // Merge — do NOT replace userData; createVisual stores pivot ref there
+        Object.assign(visual.userData, { key: k, x, y, z, baseY: y })
         if (animate) visual.userData.animStart = Date.now()
         visual.traverse(child => {
           if (child instanceof THREE.Mesh) { child.castShadow = child.receiveShadow = true }
@@ -462,10 +732,13 @@ export default function BuildGame() {
       world.set(k, type)
       const visual = createVisual(type, tx, facing)
       visual.position.set(x, y, z)
-      visual.userData = { key: k, x, y, z, baseY: y }
+      Object.assign(visual.userData, { key: k, x, y, z, baseY: y })
       if (animate) visual.userData.animStart = Date.now()
       visual.traverse(child => {
-        if (child instanceof THREE.Mesh) { child.castShadow = child.receiveShadow = true }
+        if (child instanceof THREE.Mesh) {
+          child.receiveShadow = true
+          child.castShadow = type !== "dirt"   // dirt layer is never visible, skip shadow cost
+        }
       })
       scene.add(visual); visuals.set(k, visual)
 
@@ -493,14 +766,34 @@ export default function BuildGame() {
       setCount(c => c - 1)
     }
 
-    // Build floor
+    // Build floor — 2 layers: grass on top, dirt below
     for (let x = 0; x < 16; x++)
-      for (let z = 0; z < 16; z++)
-        addBlock(x, 0, z, "grass")
+      for (let z = 0; z < 16; z++) {
+        addBlock(x, -1, z, "dirt")
+        addBlock(x,  0, z, "grass")
+      }
 
-    const highlight = new THREE.Mesh(
-      new THREE.BoxGeometry(1.03, 1.03, 1.03),
-      new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, transparent: true, opacity: 0.45 })
+    // Sky — added after floor so depth sort is clean
+    scene.add(buildSkyDome())
+    scene.add(buildSunDisc())
+
+    // ── Reset world ──
+    resetRef.current = () => {
+      // Remove all placed visuals and bounds (skip dirt/grass floor)
+      for (const [k, type] of [...world.entries()]) {
+        if (type === "dirt" || type === "grass") continue
+        const v = visuals.get(k); if (v) { scene.remove(v); visuals.delete(k) }
+        const b = boundsMap.get(k)
+        if (b) { scene.remove(b); const i = placeable.indexOf(b); if (i >= 0) placeable.splice(i, 1); boundsMap.delete(k) }
+        world.delete(k)
+      }
+      doorRoots.clear(); doorStates.clear(); doorAnims.clear()
+      setCount(0)
+    }
+
+    const highlight = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(1.03, 1.03, 1.03)),
+      new THREE.LineBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.85 })
     )
     highlight.visible = false; scene.add(highlight)
 
@@ -538,6 +831,15 @@ export default function BuildGame() {
       return false
     }
 
+    // True only when the new block's AABB physically intersects the player's current AABB.
+    // Used for placement — playerOverlaps(bx,by,bz) was wrong because it scanned
+    // blocks ABOVE the target slot and falsely blocked placing below elevated blocks.
+    function newBlockHitsPlayer(bx: number, by: number, bz: number): boolean {
+      return pos.x - PW < bx + 0.5 && pos.x + PW > bx - 0.5 &&
+             pos.y      < by + 0.5 && pos.y + 1.8 > by - 0.5 &&
+             pos.z - PW < bz + 0.5 && pos.z + PW > bz - 0.5
+    }
+
     const ray = new THREE.Raycaster(); ray.far = REACH
     function getHit() {
       ray.setFromCamera(new THREE.Vector2(0, 0), cam)
@@ -550,9 +852,16 @@ export default function BuildGame() {
     function onLockChange() {
       isLocked = document.pointerLockElement === renderer.domElement
       setLocked(isLocked)
+      if (!isLocked) keys.clear()   // evita teclas "atascadas" al salir con ESC
     }
     document.addEventListener("pointerlockchange", onLockChange)
-    requestLockRef.current = () => renderer.domElement.requestPointerLock()
+    requestLockRef.current = () => {
+      const el = renderer.domElement
+      const result = el.requestPointerLock() as unknown as Promise<void> | undefined
+      // Browsers return a Promise in newer APIs — if the first attempt fails
+      // (cooldown after ESC), retry once after a short delay
+      if (result instanceof Promise) result.catch(() => setTimeout(() => el.requestPointerLock(), 200))
+    }
     renderer.domElement.addEventListener("click", () => { if (!isLocked) renderer.domElement.requestPointerLock() })
 
     function onMouseMove(e: MouseEvent) {
@@ -580,7 +889,7 @@ export default function BuildGame() {
           const norm    = hit.face!.normal.clone().transformDirection(hit.object.matrixWorld).round()
           const p       = hit.object.position.clone().add(norm)
           const [bx, by, bz] = [Math.round(p.x), Math.round(p.y), Math.round(p.z)]
-          if (by >= 0 && !playerOverlaps(bx, by, bz)) {
+          if (by >= 0 && !newBlockHitsPlayer(bx, by, bz)) {
             const facing = Math.round(yaw / (Math.PI / 2)) * (Math.PI / 2)
             addBlock(bx, by, bz, selectedRef.current, true, facing)
             setCount(c => c + 1)
@@ -589,7 +898,7 @@ export default function BuildGame() {
         }
       } else if (e.button === 0 && hit) {
         const { x, y, z } = hit.object.userData
-        if (y > 0) removeBlock(x, y, z)
+        if (y >= 0) removeBlock(x, y, z)
       }
     }
     function onContextMenu(e: Event) { e.preventDefault() }
@@ -680,6 +989,10 @@ export default function BuildGame() {
         if (!playerOverlaps(nx, pos.y, pos.z)) pos.x = nx
         const nz = pos.z + mz
         if (!playerOverlaps(pos.x, pos.y, nz)) pos.z = nz
+
+        // Clamp to platform boundaries — player can't walk off the edge
+        pos.x = Math.max(-0.5 + PW, Math.min(15.5 - PW, pos.x))
+        pos.z = Math.max(-0.5 + PW, Math.min(15.5 - PW, pos.z))
 
         vel.y = Math.max(vel.y + GRAVITY * dt, -20)
         const dy = vel.y * dt
@@ -807,7 +1120,6 @@ export default function BuildGame() {
           onClick={() => requestLockRef.current()}
         >
           <div className="text-center space-y-5 pointer-events-none">
-            <div className="text-2xl font-mono text-foreground-principal tracking-[0.3em]">BUILD BATTLE</div>
             <div className="text-[11px] font-mono text-foreground-icons space-y-1.5 leading-relaxed">
               <div><span className="text-foreground-secondary">W A S D</span>  —  move</div>
               <div><span className="text-foreground-secondary">Space</span>  —  jump</div>
@@ -816,8 +1128,16 @@ export default function BuildGame() {
               <div><span className="text-foreground-secondary">1–9  /  scroll</span>  —  select block</div>
               <div><span className="text-foreground-secondary">ESC</span>  —  pause</div>
             </div>
+            <div className="flex flex-col items-center gap-3 pt-1" onClick={e => e.stopPropagation()}>
+              <button
+                className="text-xs font-mono text-red-400 border border-red-400/50 px-5 py-2 hover:bg-red-400/10 transition-colors pointer-events-auto"
+                onClick={() => resetRef.current()}
+              >
+                reset world
+              </button>
+            </div>
             <motion.div
-              className="text-xs font-mono text-foreground-icons border border-border px-5 py-2 inline-block"
+              className="text-xs font-mono text-foreground-icons border border-border px-5 py-2 inline-block pointer-events-none"
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.8, repeat: Infinity }}
             >

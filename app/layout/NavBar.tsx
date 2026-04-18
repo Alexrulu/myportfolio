@@ -109,7 +109,7 @@ export default function NavBar() {
 
           {/* Easter egg ??? */}
           <li onMouseEnter={() => setHoveredSecondary("easter")}>
-            <Link href="/views/easteregg"
+            <Link href="/views/easteregg" prefetch={false}
               className={`relative flex items-center gap-3 px-4 py-2.5 cursor-pointer duration-200 ${hoveredSecondary === "easter" ? "text-foreground-principal" : "text-foreground-icons"}`}
             >
               {hoveredSecondary === "easter" && (
@@ -207,7 +207,7 @@ export default function NavBar() {
             ))}
 
             {/* Easter egg ??? */}
-            <Link href="/views/easteregg" onClick={() => setMenuOpen(false)}
+            <Link href="/views/easteregg" prefetch={false} onClick={() => setMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3.5 active:bg-white/5"
             >
               <span className="w-4 h-4 flex items-center justify-center text-foreground-icons shrink-0 text-[10px] font-mono">?</span>

@@ -57,10 +57,10 @@ export default function About() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100svh-3.5rem)] md:h-screen overflow-hidden divide-y divide-border">
+    <div className="flex flex-col h-[calc(100svh-3.5rem)] md:h-auto md:min-h-screen overflow-x-hidden divide-y divide-border">
 
       {/* ── HERO ── */}
-      <section className="relative flex-[3] overflow-hidden group/hero">
+      <section className="relative flex-[3] min-h-[400px] md:min-h-[420px] overflow-hidden group/hero">
 
         {/* Aurora — desktop only */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none hidden lg:block" aria-hidden>
@@ -138,7 +138,7 @@ export default function About() {
           }}
         />
 
-        <div className="relative z-10 flex flex-col justify-between h-full p-6 gap-2 md:p-8 lg:p-10">
+        <div className="relative z-10 flex flex-col justify-between h-full p-6 gap-2 md:p-8 lg:p-10 lg:justify-start lg:gap-8">
 
           {/* Nombre */}
           <div className="flex flex-col gap-1.5">
@@ -172,39 +172,37 @@ export default function About() {
               ))}
             </div>
 
-            <div className="flex items-end justify-between">
-              <div className="flex gap-2 flex-wrap">
-                <Button href="/views/contact">{t.contactBtn}</Button>
-                <Button
-                  href={language === "EN" ? "/AlexandroLuceroCV-English-3-26.docx.pdf" : "/AlexandroLuceroCV-Spanish-3-26.docx.pdf"}
-                  external
-                >
-                  {t.resumeBtn}
-                </Button>
-              </div>
-
-              {/* Stats tablet/desktop — columna derecha */}
-              <div className="hidden md:flex flex-col gap-2 lg:gap-3 items-end">
-                {stats.map(({ value, label }) => (
-                  <div key={label} className="flex flex-col items-end">
-                    <span className="text-2xl lg:text-4xl font-semibold text-foreground-principal leading-none">
-                      {value}
-                    </span>
-                    <span className="text-[10px] lg:text-xs font-mono text-foreground-icons uppercase tracking-widest">
-                      {label}
-                    </span>
-                  </div>
-                ))}
-              </div>
+            <div className="flex gap-2 flex-wrap">
+              <Button href="/views/contact">{t.contactBtn}</Button>
+              <Button
+                href={language === "EN" ? "/AlexandroLuceroCV-English-3-26.docx.pdf" : "/AlexandroLuceroCV-Spanish-3-26.docx.pdf"}
+                external
+              >
+                {t.resumeBtn}
+              </Button>
             </div>
           </div>
 
         </div>
 
+        {/* Stats tablet/desktop — ancladas bottom-right fuera del flujo */}
+        <div className="hidden md:flex absolute bottom-6 right-6 md:bottom-8 md:right-8 lg:bottom-10 lg:right-10 flex-col gap-2 lg:gap-3 items-end z-10">
+          {stats.map(({ value, label }) => (
+            <div key={label} className="flex flex-col items-end">
+              <span className="text-2xl lg:text-4xl font-semibold text-foreground-principal leading-none">
+                {value}
+              </span>
+              <span className="text-[10px] lg:text-xs font-mono text-foreground-icons uppercase tracking-widest">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+
       </section>
 
       {/* ── SERVICES ── */}
-      <section className="flex flex-col md:flex-row divide-y divide-border md:divide-y-0 md:divide-x flex-[2] overflow-hidden">
+      <section className="flex flex-col md:flex-row divide-y divide-border md:divide-y-0 md:divide-x flex-[2] min-h-[220px] md:min-h-[260px] overflow-hidden">
 
         {/* Columna intro — tablet más angosta, desktop normal */}
         <div className="hidden md:flex flex-col justify-between md:p-4 lg:p-6 md:w-1/4 lg:w-1/3 border-r border-border">
