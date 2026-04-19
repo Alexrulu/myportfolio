@@ -178,7 +178,7 @@ export default function NavBar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.97 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="md:hidden fixed bottom-[57px] left-0 right-0 z-100 border-y border-border bg-background flex flex-col divide-y divide-border shadow-[0_-16px_40px_#0e0e0e]"
+              className="md:hidden fixed bottom-14.25 left-0 right-0 z-100 border-y border-border bg-background flex flex-col divide-y divide-border shadow-[0_-16px_40px_#0e0e0e]"
             >
             {/* Email */}
             <div
@@ -191,7 +191,7 @@ export default function NavBar() {
                 </span>
                 <span className="text-xs font-mono text-foreground-secondary truncate">{EMAIL}</span>
               </div>
-              <span className="text-xs text-foreground-icons flex-shrink-0">{copied ? "✓" : "↗"}</span>
+              <span className="text-xs text-foreground-icons shrink-0">{copied ? "✓" : "↗"}</span>
             </div>
 
             {/* Secondary items */}
@@ -205,20 +205,6 @@ export default function NavBar() {
                 <span className="text-xs text-foreground-icons">↗</span>
               </a>
             ))}
-
-            {/* Easter egg ??? */}
-            <Link href="/views/easteregg" prefetch={false} onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3.5 active:bg-white/5"
-            >
-              <span className="w-4 h-4 flex items-center justify-center text-foreground-icons shrink-0 text-[10px] font-mono">?</span>
-              <motion.span
-                className="text-sm text-foreground-icons flex-1 font-mono tracking-widest"
-                animate={{ opacity: [0.4, 1, 0.4] }}
-                transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-              >
-                ???
-              </motion.span>
-            </Link>
 
             {/* Language toggle */}
             <div className="flex">
@@ -265,7 +251,7 @@ export default function NavBar() {
 {/* Hamburger — separado por borde */}
 <button
   onClick={() => setMenuOpen((v) => !v)}
-  className={`border-l border-border w-14 flex items-center justify-center duration-200 flex-shrink-0
+  className={`border-l border-border w-14 flex items-center justify-center duration-200 shrink-0
     ${menuOpen ? "bg-white/5" : ""}`}
 >
   <div className="relative w-3.5 h-3.5">

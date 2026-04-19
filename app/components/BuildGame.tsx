@@ -4,21 +4,22 @@ import { useEffect, useRef, useState } from "react"
 import * as THREE from "three"
 import Link from "next/link"
 import { motion } from "motion/react"
+import { useLanguage } from "../context/LanguageContext"
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
 type BlockType = "grass" | "wood" | "log" | "door" | "glass" | "monitor" | "desk" | "coffee" | "bug" | "dirt" | "plant"
 
-const BLOCK_DEFS: { id: BlockType; label: string; emoji: string; key: string }[] = [
-  { id: "plant",   label: "Planta",  emoji: "🪴", key: "1" },
-  { id: "wood",    label: "Madera",  emoji: "🪵", key: "2" },
-  { id: "log",     label: "Concreto", emoji: "🪨", key: "3" },
-  { id: "door",    label: "Puerta",  emoji: "🚪", key: "4" },
-  { id: "glass",   label: "Vidrio",  emoji: "🪟", key: "5" },
-  { id: "monitor", label: "PC",      emoji: "🖥️", key: "6" },
-  { id: "desk",    label: "Mesa",    emoji: "🪑", key: "7" },
-  { id: "coffee",  label: "Café",    emoji: "☕", key: "8" },
-  { id: "bug",     label: "Bug 💥",  emoji: "🐛", key: "9" },
+const BLOCK_DEFS: { id: BlockType; en: string; es: string; emoji: string; key: string }[] = [
+  { id: "plant",   en: "Plant",    es: "Planta",   emoji: "🪴", key: "1" },
+  { id: "wood",    en: "Wood",     es: "Madera",   emoji: "🪵", key: "2" },
+  { id: "log",     en: "Concrete", es: "Concreto", emoji: "🪨", key: "3" },
+  { id: "door",    en: "Door",     es: "Puerta",   emoji: "🚪", key: "4" },
+  { id: "glass",   en: "Glass",    es: "Vidrio",   emoji: "🪟", key: "5" },
+  { id: "monitor", en: "PC",       es: "PC",       emoji: "🖥️", key: "6" },
+  { id: "desk",    en: "Desk",     es: "Mesa",     emoji: "🪑", key: "7" },
+  { id: "coffee",  en: "Coffee",   es: "Café",     emoji: "☕", key: "8" },
+  { id: "bug",     en: "Bug 💥",   es: "Bug 💥",   emoji: "🐛", key: "9" },
 ]
 
 // ── Texture helpers ───────────────────────────────────────────────────────────
@@ -545,13 +546,13 @@ function buildSkyDome(): THREE.Mesh {
   const c = document.createElement("canvas"); c.width = 2; c.height = 256
   const ctx = c.getContext("2d")!
   const g = ctx.createLinearGradient(0, 0, 0, 256)
-  g.addColorStop(0.00, "#0C0618")   // zenith — deep violet-black
-  g.addColorStop(0.20, "#1C0A30")   // upper sky — dark purple
-  g.addColorStop(0.42, "#641A40")   // mid sky — magenta-purple
-  g.addColorStop(0.60, "#AA2818")   // lower sky — deep red-orange
-  g.addColorStop(0.72, "#D85010")   // near horizon — orange
-  g.addColorStop(0.83, "#EC8008")   // horizon — amber
-  g.addColorStop(1.00, "#C87820")   // underground (never visible)
+  g.addColorStop(0.00, "#1A1040")   // zenith — deep blue-purple
+  g.addColorStop(0.22, "#3A1860")   // upper sky — purple
+  g.addColorStop(0.44, "#A03468")   // mid sky — pink-magenta
+  g.addColorStop(0.62, "#D05030")   // lower sky — warm red-orange
+  g.addColorStop(0.75, "#E87020")   // near horizon — orange
+  g.addColorStop(0.86, "#F5A030")   // horizon — bright amber
+  g.addColorStop(1.00, "#E8C050")   // underground (never visible)
   ctx.fillStyle = g; ctx.fillRect(0, 0, 2, 256)
   const dome = new THREE.Mesh(
     new THREE.SphereGeometry(75, 24, 12),
@@ -593,6 +594,21 @@ function buildSunDisc(): THREE.Mesh {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function BuildGame() {
+  const { language } = useLanguage()
+  const t = {
+    move:       language === "EN" ? "move"              : "mover",
+    jump:       language === "EN" ? "jump"              : "saltar",
+    place:      language === "EN" ? "place / open door" : "colocar / abrir puerta",
+    remove:     language === "EN" ? "remove block"      : "remover bloque",
+    select:     language === "EN" ? "select block"      : "seleccionar bloque",
+    pause:      language === "EN" ? "pause"             : "pausar",
+    reset:      language === "EN" ? "reset world"       : "reiniciar mundo",
+    clickPlay:  language === "EN" ? "click to play"     : "click para jugar",
+    placed:     language === "EN" ? "placed"            : "colocados",
+    back:       language === "EN" ? "← back"            : "← volver",
+  }
+  const label = (b: typeof BLOCK_DEFS[0]) => language === "EN" ? b.en : b.es
+
   const mountRef       = useRef<HTMLDivElement>(null)
   const [selected, setSelected] = useState<BlockType>("grass")
   const [count, setCount]       = useState(0)
@@ -612,7 +628,7 @@ export default function BuildGame() {
 
     // ── Scene ──
     const scene = new THREE.Scene()
-    scene.fog = new THREE.Fog("#CC6828", 16, 32)
+    scene.fog = new THREE.Fog("#D8844A", 18, 34)
 
     const cam = new THREE.PerspectiveCamera(75, W / H, 0.05, 100)
 
@@ -623,8 +639,8 @@ export default function BuildGame() {
     renderer.autoClear = false
     container.appendChild(renderer.domElement)
 
-    scene.add(new THREE.AmbientLight("#906898", 0.60))
-    const sun = new THREE.DirectionalLight("#FFCC68", 1.05)
+    scene.add(new THREE.AmbientLight("#B088C0", 0.80))
+    const sun = new THREE.DirectionalLight("#FFD888", 1.20)
     // Match the visual sun disc position exactly so shadows fall the right way
     sun.position.set(-26, 13, -30)
     sun.target.position.set(7.5, 0, 7.5)
@@ -779,15 +795,20 @@ export default function BuildGame() {
 
     // ── Reset world ──
     resetRef.current = () => {
-      // Remove all placed visuals and bounds (skip dirt/grass floor)
-      for (const [k, type] of [...world.entries()]) {
-        if (type === "dirt" || type === "grass") continue
+      // Remove every block including the floor
+      for (const [k] of [...world.entries()]) {
         const v = visuals.get(k); if (v) { scene.remove(v); visuals.delete(k) }
         const b = boundsMap.get(k)
         if (b) { scene.remove(b); const i = placeable.indexOf(b); if (i >= 0) placeable.splice(i, 1); boundsMap.delete(k) }
         world.delete(k)
       }
       doorRoots.clear(); doorStates.clear(); doorAnims.clear()
+      // Rebuild the floor fresh
+      for (let x = 0; x < 16; x++)
+        for (let z = 0; z < 16; z++) {
+          addBlock(x, -1, z, "dirt")
+          addBlock(x,  0, z, "grass")
+        }
       setCount(0)
     }
 
@@ -1107,8 +1128,8 @@ export default function BuildGame() {
       {locked && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="relative w-5 h-5">
-            <div className="absolute top-1/2 left-0 right-0 h-[2px] -translate-y-1/2 bg-white mix-blend-difference" />
-            <div className="absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-white mix-blend-difference" />
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2 bg-white mix-blend-difference" />
+            <div className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 bg-white mix-blend-difference" />
           </div>
         </div>
       )}
@@ -1121,19 +1142,19 @@ export default function BuildGame() {
         >
           <div className="text-center space-y-5 pointer-events-none">
             <div className="text-[11px] font-mono text-foreground-icons space-y-1.5 leading-relaxed">
-              <div><span className="text-foreground-secondary">W A S D</span>  —  move</div>
-              <div><span className="text-foreground-secondary">Space</span>  —  jump</div>
-              <div><span className="text-foreground-secondary">Right click</span>  —  place / open door</div>
-              <div><span className="text-foreground-secondary">Left click</span>  —  remove block</div>
-              <div><span className="text-foreground-secondary">1–9  /  scroll</span>  —  select block</div>
-              <div><span className="text-foreground-secondary">ESC</span>  —  pause</div>
+              <div><span className="text-foreground-secondary">W A S D</span>  —  {t.move}</div>
+              <div><span className="text-foreground-secondary">Space</span>  —  {t.jump}</div>
+              <div><span className="text-foreground-secondary">Right click</span>  —  {t.place}</div>
+              <div><span className="text-foreground-secondary">Left click</span>  —  {t.remove}</div>
+              <div><span className="text-foreground-secondary">1–9  /  scroll</span>  —  {t.select}</div>
+              <div><span className="text-foreground-secondary">ESC</span>  —  {t.pause}</div>
             </div>
             <div className="flex flex-col items-center gap-3 pt-1" onClick={e => e.stopPropagation()}>
               <button
                 className="text-xs font-mono text-red-400 border border-red-400/50 px-5 py-2 hover:bg-red-400/10 transition-colors pointer-events-auto"
                 onClick={() => resetRef.current()}
               >
-                reset world
+                {t.reset}
               </button>
             </div>
             <motion.div
@@ -1141,7 +1162,7 @@ export default function BuildGame() {
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.8, repeat: Infinity }}
             >
-              click to play
+              {t.clickPlay}
             </motion.div>
           </div>
         </div>
@@ -1152,24 +1173,24 @@ export default function BuildGame() {
         <Link href="/" onClick={() => document.exitPointerLock()}
           className="text-[10px] font-mono text-foreground-icons hover:text-foreground-secondary transition-colors px-2 py-1 border border-border bg-background/80 backdrop-blur-sm"
         >
-          ← back
+          {t.back}
         </Link>
       </div>
 
       {/* Hotbar */}
       <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-0.5 p-1 bg-black/70 border border-border backdrop-blur-sm transition-opacity duration-300 ${locked ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-        {BLOCK_DEFS.map(({ id, label, emoji, key }) => (
+        {BLOCK_DEFS.map((b) => { const { id, emoji, key } = b; return (
           <div key={id} className={`relative w-11 h-12 flex flex-col items-center justify-center gap-0.5 text-[9px] font-mono transition-all
             ${selected === id ? "bg-white/20 text-foreground-principal border-2 border-white/70" : "text-foreground-secondary border border-border/60"}`}>
             <span className="absolute top-0.5 right-0.5 text-[8px] text-foreground-icons opacity-50">{key}</span>
             <span className="text-base leading-none">{emoji}</span>
-            <span>{label}</span>
+            <span>{label(b)}</span>
           </div>
-        ))}
+        )})}
       </div>
 
       {locked && (
-        <div className="absolute bottom-3 right-3 text-[10px] font-mono text-foreground-icons">{count} placed</div>
+        <div className="absolute bottom-3 right-3 text-[10px] font-mono text-foreground-icons">{count} {t.placed}</div>
       )}
     </div>
   )
