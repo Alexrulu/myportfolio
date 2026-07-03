@@ -178,7 +178,7 @@ export default function NavBar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.97 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="md:hidden fixed bottom-14.25 left-0 right-0 z-100 border-y border-border bg-background flex flex-col divide-y divide-border shadow-[0_-16px_40px_#0e0e0e]"
+              className="md:hidden fixed bottom-14.25 left-0 right-0 z-100 border-y border-border bg-background flex flex-col divide-y divide-border shadow-[0_-16px_40px_#000000]"
             >
             {/* Email */}
             <div

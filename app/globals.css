@@ -3,7 +3,7 @@
 
 :root {
   /* Background */
-  --background: #0e0e0e;              /* negro neutro, sin tono violáceo */
+  --background: #000000;              /* negro puro */
   --background-card: rgba(38, 38, 38, 0.55);  /* gris carbón semitransparente */
   --background-hover: #161616;        /* hover levemente más claro */
 
@@ -15,6 +15,10 @@
   /* Border */
   --border: rgba(60, 60, 60, 0.5);    /* borde gris neutro sutil */
   --border-active: #d4d4d4;           /* gris claro como acento activo */
+
+  /* Accent — azul/índigo coherente con la aurora */
+  --accent: #6366f1;                  /* indigo-500 */
+  --accent-foreground: #c7d2fe;       /* indigo-200 */
 }
 
 @theme inline {
@@ -28,6 +32,9 @@
 
   --color-border: var(--border);
   --color-border-active: var(--border-active);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 
   --font-sans: 'Inter', sans-serif;
 }
@@ -82,4 +89,65 @@ body::after {
 .leaflet-bar {
   border: 1px solid rgba(60, 60, 60, 0.5) !important;
   box-shadow: none !important;
+}
+
+/* ── Grid / dot backgrounds (estilo Aceternity) ── */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+.bg-grid-sm {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.bg-dot {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Máscara radial: desvanece el fondo hacia los bordes */
+.mask-radial-faded {
+  -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 75%);
+}
+
+/* Máscara vertical: grilla visible a todo el ancho, se desvanece solo arriba/abajo */
+.mask-faded-y {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
+}
+
+/* Texto con gradiente blanco → gris (headings) */
+.text-gradient {
+  background-image: linear-gradient(to bottom, #ffffff 0%, #a0a0a0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Marquee infinito ── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee var(--marquee-duration, 32s) linear infinite;
+}
+.marquee-paused:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+/* ── Glow suave pulsante para spotlights ── */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 0.75; }
+}
+
+/* Scroll suave para la navegación por anclas */
+html {
+  scroll-behavior: smooth;
 }

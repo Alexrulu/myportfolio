@@ -134,7 +134,7 @@ export default function About() {
         <div
           className="absolute inset-0 lg:hidden pointer-events-none"
           style={{
-            background: "linear-gradient(to right, #0e0e0e 40%, rgba(14,14,14,0.7) 65%, transparent 100%), linear-gradient(to top, #0e0e0e 15%, transparent 45%)",
+            background: "linear-gradient(to right, #000000 40%, rgba(0,0,0,0.7) 65%, transparent 100%), linear-gradient(to top, #000000 15%, transparent 45%)",
           }}
         />
 

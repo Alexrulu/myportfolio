@@ -157,7 +157,7 @@ export default function Projects() {
                     )}
                     <div
                       className="absolute inset-0 pointer-events-none"
-                      style={{ background: "linear-gradient(to top, #0e0e0e 0%, transparent 60%)" }}
+                      style={{ background: "linear-gradient(to top, #000000 0%, transparent 60%)" }}
                     />
                     <div className="absolute bottom-0 left-0 p-4">
                       <p className="text-[10px] font-mono text-foreground-icons uppercase tracking-widest mb-0.5">
@@ -241,7 +241,7 @@ export default function Projects() {
             )}
             <div
               className="absolute inset-0 pointer-events-none"
-              style={{ background: "linear-gradient(to top, #0e0e0e 0%, transparent 60%)" }}
+              style={{ background: "linear-gradient(to top, #000000 0%, transparent 60%)" }}
             />
             <div className="absolute bottom-0 left-0 p-6">
               <p className="text-[10px] font-mono text-foreground-icons uppercase tracking-widest mb-1">

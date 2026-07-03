@@ -1,3 +1,6 @@
-import Projects from "@/app/layout/Projects";
+import { redirect } from 'next/navigation'
 
-export default function ProjectsPage() { return <Projects /> }
+// Ruta antigua → nueva página dedicada.
+export default function ProjectsPage() {
+  redirect('/projects')
+}

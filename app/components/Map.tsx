@@ -21,7 +21,7 @@ export default function Map() {
         scrollWheelZoom={false}
         zoomControl={true}
         className="w-full h-full"
-        style={{ background: '#0e0e0e' }}
+        style={{ background: '#000000' }}
         attributionControl={false}
       >
         <TileLayer

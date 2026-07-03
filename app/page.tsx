@@ -1,5 +1,11 @@
-import About from './layout/About'
+import Hero from './sections/Hero'
+import TechMarquee from './sections/TechMarquee'
 
 export default function Home() {
-  return <About />
+  return (
+    <>
+      <Hero />
+      <TechMarquee />
+    </>
+  )
 }

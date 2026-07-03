@@ -1,3 +1,6 @@
-import Contact from "@/app/layout/Contact";
+import { redirect } from 'next/navigation'
 
-export default function ContactPage() { return <Contact /> }
+// Ruta antigua → nueva página dedicada.
+export default function ContactPage() {
+  redirect('/contact')
+}

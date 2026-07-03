@@ -1,3 +1,6 @@
-import Expertise from "@/app/layout/Expertise";
+import { redirect } from 'next/navigation'
 
-export default function ExpertisePage() { return <Expertise /> }
+// Ruta antigua → nueva página dedicada.
+export default function ExpertisePage() {
+  redirect('/background')
+}

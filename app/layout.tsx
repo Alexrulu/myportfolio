@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { cookies } from 'next/headers'
-import NavBar from './layout/NavBar'
+import SiteChrome from './layout/SiteChrome'
 import './globals.css'
 import { LanguageProvider } from './context/LanguageContext'
 
@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Alexandro Lucero',
-  description: 'Full Stack Software Engineer'
+  title: 'Alexandro Lucero — Full Stack Software Engineer',
+  description: 'Full Stack Software Engineer building reliable web applications with React, Next.js, Node.js and Laravel.'
 }
 
 export default async function RootLayout({
@@ -26,23 +26,14 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const cookieStore = await cookies()
-  const lang = cookieStore.get("language")?.value
-  const initialLanguage = lang === "ES" ? "ES" : "EN"
+  const lang = cookieStore.get('language')?.value
+  const initialLanguage = lang === 'ES' ? 'ES' : 'EN'
 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <LanguageProvider initialLanguage={initialLanguage}>
-          <NavBar />
-          <main className="
-              w-full min-h-screen pb-16
-              md:pb-0 md:ml-44 md:w-[calc(100%-11rem)]
-              lg:ml-56 lg:w-[calc(100%-14rem)]
-              md:border-l md:border-border
-              md:h-screen md:overflow-y-auto
-            ">
-            {children}
-          </main>
+          <SiteChrome>{children}</SiteChrome>
         </LanguageProvider>
       </body>
     </html>
